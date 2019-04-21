@@ -1,0 +1,70 @@
+@keyframes pulse {
+	0% {
+		background-color: #001F3F;
+	}
+	100% {
+		background-color: #FF4136;
+	}
+}
+@keyframes animationone {
+	0%{
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
+}
+@keyframes animationoneactive {
+	0%{
+		max-width: 0;
+	}
+	100% {
+		max-width: 300px;
+	}
+}
+.presentation {
+ &, & *{
+	 box-sizing: border-box;
+ }
+	&.default {
+		.presentation-content {
+			animation: pulse 5s ease infinite;
+			&.active{
+				opacity: 1;
+			}
+		}
+	}
+	&.animationone {
+		.presentation-content {
+			opacity: 0;
+			height: 50px;
+			overflow: hidden;
+			// background: #FF4136;
+			background: white;
+			max-width: 300px;
+			animation: animationone 1s linear ;
+			box-shadow: 3px 3px 3px rgba(0,0,0,0.30);
+			h1{
+				margin: 0;
+				margin-left: 10px;
+				font-size: 20px;
+				line-height: 1.4;
+				height: 25px;
+				width: 200px;
+				overflow: hidden;
+			}
+			h2{
+				overflow: hidden;
+				margin: 0;
+				margin-left: 10px;
+				height: 25px;
+				width: 200px;
+				font-size: 14px;
+			}
+			&.active{
+				opacity: 1;
+				animation: animationoneactive 2s ease ;
+			}
+		}
+	}
+}

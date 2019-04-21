@@ -1,0 +1,21 @@
+$progress-vide: $question-wrapper;
+$progress: $reponse-selected;
+
+.question-container{
+  &.control{
+    .question-wrapper{
+      .progress{
+        position: absolute;
+        width: 100%;
+        left: 0;
+        top: 0;
+        height: 10px;
+        background-color: $progress-vide;
+        margin: 0;
+        .determinate{
+          background-color: $progress;
+        }
+      }
+    }
+  }
+}

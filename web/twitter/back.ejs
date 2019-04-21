@@ -1,0 +1,235 @@
+
+
+<html>
+  <head>
+    <title>TWITTER BACK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/master.css">
+  </head>
+  <body class="back-twitter">
+    <div id="tweets">
+      <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+      <ul id="slide-out" class="sidenav">
+        <li>
+          <div class="user-view">
+            <div class="background">
+                <img src="https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?ixlib=rb-0.3.5&ixid=eyJhcHBfaWQiOjEyMDd9&s=04cb1349ddef3da346cb4565d58c4d80&w=1000&q=80">
+            </div>
+            <a href="#name"><span class="white-text name">The boss</span></a>
+            <a href="#email"><span class="white-text email">theboss@bosscompany.com</span></a>
+          </div>
+        </li>
+        <li><a href="#!"><i class="fab fa-twitter"></i>Hashtag</a></li>
+        <li>
+          <div class="row">
+            <div class="input-field col s12">
+              <input placeholder="#ITSSOGOOD" id="hashtag" type="text" class="validate" v-model="research.hashtag">
+              <label for="hashtag">Hashtag</label>
+            </div>
+          </div>
+        </li>
+        <li><div class="divider"></div></li>
+        <li><a href="#!"><i class="material-icons">fingerprint</i>Twitter Account</a></li>
+        <li>
+          <div class="row">
+            <div class="input-field col s12">
+              <input placeholder="" id="consumer_key" type="text" class="validate" v-model="research.connection.consumer_key">
+              <label for="consumer_key">Consumer key</label>
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="row">
+            <div class="input-field col s12">
+              <input placeholder="" id="consumer_secret" type="text" class="validate" v-model="research.connection.consumer_secret">
+              <label for="consumer_secret">Consumer secret</label>
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="row">
+            <div class="input-field col s12">
+              <input placeholder="" id="access_key" type="text" class="validate" v-model="research.connection.access_key">
+              <label for="access_key">Access Key</label>
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="row">
+            <div class="input-field col s12">
+              <input placeholder="" id="access_secret" type="text" class="validate" v-model="research.connection.access_secret">
+              <label for="access_secret">Access secret</label>
+            </div>
+          </div>
+        </li>
+        <li><div class="divider"></div></li>
+        <li>
+          <a class="waves-effect waves-light btn">Lancer une app</a>
+        </li>
+      </ul>
+
+      <div class="tweet-list" id="tweets">
+        <div class="row">
+          <div class="col m7 s12 column">
+            <ul class="collection">
+              <li class="collection-item blue lighten-1" v-for="(tweet, index) in tweets">
+                <div class="row">
+                  <div class="col s11">
+                    <div>
+                      <i class="fa fa-hashtag"></i>
+                      {{showTweet(tweet)}}
+                    </div>
+                    <div>
+                      <small class="light-blue-text text-darken-4">@{{tweet.user.screen_name}}</small>
+                    </div>
+                  </div>
+                  <div class="col s1">
+                    <a class="secondary-content" v-on:click="selected(index)"><i class="fa fa-thumbs-up blue-text text-darken-4"></i></a>
+                  </div>
+                </div>
+              </li>
+           </ul>
+          </div>
+          <div class="col m5 s12 column">
+            <ul class="collapsible">
+              <li>
+                <div class="collapsible-header teal teal-text text-lighten-4"><i class="material-icons">create</i>Simuler un tweet</div>
+                <div class="collapsible-body">
+                  <div class="row">
+                    <div class="input-field col s12">
+                       <i class="fa fa-hashtag prefix teal-text"></i>
+                      <input placeholder="" id="tweet-text" type="text" class="validate" v-model="simulate_tweet.text">
+                      <label for="tweet-text">Tweet Text</label>
+                    </div>
+                    <div class="input-field col s12">
+                       <i class="fa fa-at prefix teal-text"></i>
+                      <input placeholder="" id="tweet-user" type="text" class="validate" v-model="simulate_tweet.user">
+                      <label for="tweet-user">Tweet User</label>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <a class="waves-effect waves-light btn" v-on:click="sendSimulateTweet">Afficher ce tweet</a>
+                  </div>
+                </div>
+              </li>
+            </ul>
+
+            <ul class="collection">
+              <li class="collection-item teal" v-for="(tweet, index) in selectedTweets">
+                <div class="row">
+                  <div class="col s11">
+                    <div>
+                      <i class="fa fa-hashtag teal-text text-darken-3"></i>
+                      {{showTweet(tweet)}}
+                    </div>
+                    <div>
+                      <small class="teal-text text-lighten-4">@{{tweet.user.screen_name}}</small>
+                    </div>
+                  </div>
+                  <div class="col s1">
+                    <a class="secondary-content" v-on:click="deselected(index)"><i class="material-icons orange-text">close</i></a>
+                    <a class="secondary-content" v-on:click="send(index)"><i class="material-icons white-text">send</i></a>
+                  </div>
+                </div>
+              </li>
+           </ul>
+          </div>
+        </div>
+      </div>
+      <div class="fixed-action-btn">
+        <a class="btn-floating btn-large blue darken-1">
+          <i class="large material-icons" v-on:click="hide">close</i>
+        </a>
+      </div>
+    </div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script type="text/javascript">
+    var socket = io.connect('http://<%= config.host %>:<%= config.port %>');
+    var TWITTER_CONSUMER_KEY = "0etEoOnhbEKizNCNKewVQVZ1K"
+    var TWITTER_CONSUMER_SECRET = "HxYMAbWFW99sSOVEp9ua6b8byryJZdZCge5CAOpFCYJofC4Bsc"
+    var TWITTER_ACCESS_TOKEN_KEY = "1055531155884306432-s1Bvv1K31fGjCD0bkDebIwhSflpq6i"
+    var TWITTER_ACCESS_TOKEN_SECRET = "KfRYwNdMoJCSZk1tLrLcqvhXUo0wyrkJRl5iRRC0hGYIL"
+    document.addEventListener('DOMContentLoaded', function() {
+      var elems2 = document.querySelectorAll('.collapsible');
+      var instances2 = M.Collapsible.init(elems2, {});
+
+      var elemsSide = document.querySelectorAll('.sidenav');
+      var instances = M.Sidenav.init(elemsSide);
+    });
+
+    var app = new Vue({
+      el: '#tweets',
+      data: {
+        research: {
+          hashtag: "",
+          connection: {
+            consumer_key:TWITTER_CONSUMER_KEY,
+            consumer_secret:TWITTER_CONSUMER_SECRET,
+            access_key:TWITTER_ACCESS_TOKEN_KEY,
+            access_secret:TWITTER_ACCESS_TOKEN_SECRET
+          }
+        },
+        simulate_tweet: {
+          text: "",
+          user:""
+        },
+        tweets: [],
+        selectedTweets: []
+      },
+      methods: {
+        showTweet: function(tweet){
+          if(tweet.extended_tweet !== undefined){
+            return tweet.extended_tweet.full_text
+          }
+          return tweet.text
+        },
+        selected: function(index){
+          this.selectedTweets.unshift(this.tweets[index])
+        },
+        deselected: function(index){
+          this.selectedTweets.splice(index, 1)
+        },
+        send: function(index){
+          var selected = this.selectedTweets[index]
+          this.sendTweet({
+            text : this.showTweet(selected),
+            user: "@" + selected.user.screen_name
+          })
+        },
+        sendTweet: function(tweet){
+          socket.emit('back', {type: "twitter", content: {
+            action: "affiche-tweet",
+            tweet: tweet,
+            hashtag: this.research.hashtag
+          }})
+        },
+        sendSimulateTweet: function(){
+          this.sendTweet({
+            text : this.simulate_tweet.text,
+            user: "@" + this.simulate_tweet.user
+          })
+        },
+        hide: function(){
+          socket.emit('back', {type: "twitter", content: {
+            action: "hide-tweet"
+          }})
+        }
+      }
+    })
+
+    socket.on('front-back-twitter', function(data){
+      if(data.action === "new-tweet"){
+        app.tweets.unshift(data.tweet)
+      }
+    })
+
+    </script>
+  </body>
+</html>

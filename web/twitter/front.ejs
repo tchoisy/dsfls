@@ -1,0 +1,54 @@
+
+
+<html>
+  <head>
+    <title>TWITTER BACK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/master.css">
+  </head>
+  <body class="front-twitter overflow">
+    <div class="front-twitter-container" id="tweet">
+      <div v-bind:class="{'twitter-content': true, 'z-depth-3': true, 'active': displayOn}">
+        <div class="tweet-text">{{tweet.text}}</div>
+        <div class="tweet-user">{{tweet.user}}</div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script type="text/javascript">
+    var socket = io.connect('http://<%= config.host %>:<%= config.port %>');
+
+    var app = new Vue({
+      el: '#tweet',
+      data: {
+        displayOn: false,
+        tweet: {
+          text:"",
+          user:""
+        }
+      }
+    })
+
+    socket.on('front-twitter', function(data){
+      if(data.action === "affiche-tweet"){
+        app.tweet = data.tweet
+        app.displayOn = true
+      } else if(data.action === "hide-tweet"){
+        app.displayOn = false
+        setTimeout(function(){
+          app.tweet = {
+            text:"",
+            user:""
+          }
+        }, 2000)
+      }
+    })
+
+    </script>
+  </body>
+</html>

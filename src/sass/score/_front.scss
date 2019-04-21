@@ -1,0 +1,96 @@
+$primary: #336879;
+$secondary: #1D414C;
+
+$time-scoring: 0.5s;
+$time-team: 0.5s;
+$time-team-delay: $time-scoring;
+
+$time-team-hide: $time-team;
+$time-scoring-hide: $time-scoring;
+$time-scoring-hide-delay: $time-team-hide;
+.score-front{
+  position: relative;
+  width: 100%;
+  height: 100%;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  &, *{
+    box-sizing: border-box;
+  }
+  .score-front-container{
+    height: 60px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    max-width: 500px;
+    min-width: 300px;
+    display: flex;
+    .wrapper{
+      flex:1;
+      height: 100%;
+      overflow:hidden;
+      .score-team{
+        height: 100%;
+        background: $primary;
+        color: white;
+        text-align: left;
+        padding: 10px;
+        display: flex;
+        align-items: center;
+      }
+      &.score-team-one{
+        .score-team{
+          transform: translateX(110%);
+          transition: transform $time-team-hide ease ;
+        }
+      }
+      &.score-team-two{
+        .score-team{
+          transform: translateX(-110%);
+          transition: transform $time-team-hide ease ;
+        }
+      }
+    }
+    .scoring{
+      width: 60px;
+      background: $secondary;
+      color: white;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform-origin: center;
+      transform: scale(0);
+      transition: transform $time-scoring-hide ease $time-scoring-hide-delay;
+      &.score-score-one{
+        // transform-origin: top right;
+        border-right: 1px solid white;
+      }
+      &.score-score-two{
+        // transform-origin: top left;
+        border-left: 1px solid white;
+      }
+    }
+
+    &.active{
+      .wrapper{
+        &.score-team-one{
+          .score-team{
+            transform: translateX(0%);
+            transition: transform $time-team ease $time-team-delay;
+          }
+        }
+        &.score-team-two{
+          .score-team{
+            transform: translateX(0%);
+            transition: transform $time-team ease $time-team-delay;
+          }
+        }
+      }
+      .scoring{
+        transform: scale(1);
+        transition: transform $time-scoring ease;
+      }
+    }
+  }
+}

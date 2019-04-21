@@ -1,0 +1,142 @@
+@import url('https://fonts.googleapis.com/css?family=Shrikhand');
+@keyframes animationthreeactive {
+	0%{
+	}
+	100% {
+	}
+}
+body.overflow{
+	overflow:hidden;
+}
+// $primary: #006FFF;
+$primary: #336879;
+$secondary: white;
+.presentation {
+ &, & *{
+	 box-sizing: border-box;
+	 // font-family: 'Shrikhand', cursive;
+	 font-family: 'Montserrat', sans-serif;
+ }
+
+	&.animationthree {
+		position: absolute;
+		bottom: 0px;
+		right: 0px;
+		min-width: 100%;
+		font-family: 'Montserrat', sans-serif;
+		font-weight: 900;
+		.presentation-content {
+			min-width: 100%;
+	    height: 82px;
+	    display: block;
+	    position: relative;
+	    text-align: right;
+			.presentation-text {
+				height: 47px;
+	      display: block;
+	      background-color: $primary;
+	      position: absolute;
+	      right: 0;
+	      top:0;
+	      transform: translateX(200%);
+				animation: name 1s 1;
+				h1{
+					margin: 0;
+					padding: 6px 20px;
+	        display: inline-block;
+	        color: $secondary;
+	        font-size: 30px;
+					line-height: 1.1;
+				}
+			}
+			.presentation-baseline{
+				height: 35px;
+	      background-color: $secondary;
+	      position: absolute;
+	      right: 0;
+	      bottom: 0;
+	      transform: translateX(200%);
+				display: inline-block;
+				animation: baseline 1s 1 ;
+				h2{
+					margin: 0;
+					padding: 6px 20px;
+	        color: $primary;
+	        font-size: 20px;
+	        transform: translateX(200%);
+					line-height: 1.1;
+				}
+			}
+			&.active{
+        .presentation-text{
+          transform: translateX(0);
+					animation: nameActive 1s 1 ;
+          h1{
+            transform: translateX(0);
+          }
+        }
+        .presentation-baseline{
+          transform: translateX(0);
+					animation: baselineActive 2s 1 ;
+          h2{
+            transform: translateX(0);
+						animation: baselineTextActive 2s 1 ;
+          }
+        }
+	    }
+		}
+	}
+	@keyframes nameActive {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+	@keyframes name {
+    0% {
+      transform: translateX(0);
+    }
+    20% {
+      transform: translateX(-20%);
+    }
+    100% {
+      transform: translateX(200%);
+    }
+  }
+
+
+  @keyframes baselineActive {
+    0% {
+      transform: translateX(100%);
+    }
+    50% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+  @keyframes baseline {
+    0% {
+			transform: translateX(0);
+    }
+    100% {
+			transform: translateX(200%);
+    }
+  }
+
+  @keyframes baselineTextActive {
+    0% {
+      transform: translateX(200%);
+    }
+
+    75% {
+      transform: translateX(200%);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+}

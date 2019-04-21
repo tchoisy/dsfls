@@ -1,0 +1,97 @@
+<html>
+  <head>
+    <title>PRESENTATION BACK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="../css/master.css">
+  </head>
+  <body>
+    <h1>Presentation BACK</h1>
+    <div class="presentations-back" id="presentation-back">
+      <div class="row">
+        <div class="presentations-controls col s6 offset-s3">
+          <button v-on:click="displayOff()" class="btn col s5">Hide</button>
+          <button v-on:click="add()" class="btn col s5 offset-s2">Add One</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s6">
+          <select v-model="theme.selected">
+            <option v-for="option in theme.options" v-bind:value="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+          <label>Theme</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="presentation-list col s12">
+          <div v-for="(pres, index) in presentations" v-bind:class="{'active-display': currentPresentation === index, 'row': true}">
+            <div class="input-field col s6">
+              <input type="text" v-model="pres.text" />
+              <label for="">Texte principal : </label>
+            </div>
+            <div class="input-field col s6">
+              <input type="text" v-model="pres.baseline" />
+              <label for="">Baseline : </label>
+            </div>
+            <div class="input-field col s6">
+              <button v-on:click="send(index)" class="btn">Afficher</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js" charset="utf-8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script type="text/javascript">
+      document.addEventListener('DOMContentLoaded', function() {
+        var elems = document.querySelectorAll('select');
+        var instances = M.FormSelect.init(elems);
+      });
+      var socket = io.connect('http://<%= config.host %>:<%= config.port %>');
+      // var socket = io.connect('http://<%= config.host %>:<%= config.port %>');
+      var presTpl = {text: "", baseline: ""}
+      var initData = {
+        presentations: [
+          Object.assign({}, presTpl)
+        ],
+        currentPresentation: null,
+        theme: {
+          selected: 'animationthree',
+          options: [
+            { label: 'Blue/white', value: 'animationthree' }
+          ]
+        }
+      }
+      var app = new Vue({
+        el: '#presentation-back',
+        data: Object.assign({}, initData),
+        methods: {
+          send: function (index) {
+            socket.emit('back', {type: "presentation", content: {
+              action: "affiche-presentation" ,
+              presentation: this.presentations[index],
+              theme: this.theme.selected
+            }});
+            this.currentPresentation = index
+            return true;
+          },
+          displayOff: function () {
+            socket.emit('back', {type: "presentation", content: {
+              action: "hide-presentation"
+            }});
+            this.currentPresentation = null
+            return true;
+          },
+          add: function () {
+            this.presentations.push(Object.assign({}, presTpl))
+            return true;
+          }
+        }
+      })
+    </script>
+  </body>
+</html>

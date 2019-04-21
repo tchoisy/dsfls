@@ -1,0 +1,103 @@
+<html>
+  <head>
+    <title>COUNTDOWN BACK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="/css/master.css">
+  </head>
+  <body class="back-countdown">
+    <div id="countdown-back">
+      <div class="row">
+        <div class="col s12">
+          <div class="progress">
+              <div class="determinate" v-bind:style="{width: progress}"></div>
+          </div>
+        </div>
+        <div class="col s12">
+          <div class="input-field col s2">
+            <input type="text" v-model="time" v-on:change="timeChange" number/>
+            <label for="">Time : </label>
+          </div>
+          <div class="input-field col s6">
+            <button v-on:click="start()" class="btn">Start</button>
+            <button v-on:click="pause()" class="btn">Pause</button>
+            <button v-on:click="stop()" class="btn">Stop</button>
+            <button v-on:click="reset()" class="btn">Reset</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js" charset="utf-8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="/js/easytimer.js"></script>
+    <script type="text/javascript">
+    var socket = io.connect('http://<%= config.host %>:<%= config.port %>');
+    var timer = new Timer();
+    console.log(timer)
+
+    var initData = {
+      time: 10,
+      currentTime: 10
+    }
+    var app = new Vue({
+      el: '#countdown-back',
+      data: Object.assign({}, initData),
+      methods: {
+        start: function (index) {
+          timer.start({
+            countdown: true,
+            startValues: {seconds: this.time},
+            precision: "secondTenths"
+          })
+          return true;
+        },
+        pause: function () {
+          timer.pause()
+          return true;
+        },
+        stop: function () {
+          timer.stop()
+          return true;
+        },
+        reset: function () {
+          timer.stop()
+          this.currentTime = this.time
+          socket.emit('back', {type: "countdown", content: {
+            action: "change",
+            content: {
+              currentTime: {seconds: app.time, secondTenths: 0},
+              time: app.time
+            }
+          }});
+          return true;
+        },
+        timeChange: function(){
+          this.currentTime = this.time
+        }
+      },
+      computed: {
+        progress: function () {
+          console.log(this.currentTime, this.time)
+          return ((1- (this.currentTime / (this.time )) ) * 100) + '%'
+        }
+      }
+    })
+
+    timer.addEventListener('secondTenthsUpdated', function (e) {
+      app.currentTime = ((timer.getTimeValues().seconds * 1000) + (timer.getTimeValues().secondTenths * 100)) / 1000
+      socket.emit('back', {type: "countdown", content: {
+        action: "change",
+        content: {
+          currentTime: timer.getTimeValues(),
+          time: app.time
+        }
+      }});
+    });
+
+
+    </script>
+  </body>
+</html>

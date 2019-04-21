@@ -1,0 +1,59 @@
+<html>
+  <head>
+    <title>QUESTION CONTROL FRONT</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="/css/master.css">
+  </head>
+  <body class="overflow">
+
+
+    <div class="question-list-container" id="question">
+      <div class="carousel carousel-slider center">
+         <div class="carousel-item white-text" v-for="question in questions">
+           <h2>{{question.intitule}}</h2>
+           <div class="reponses">
+             <div v-bind:class="{'reponse': true, 'bonne-reponse': reponse.isGood}" v-for="reponse in question.reponses">
+               {{reponse.label}}
+             </div>
+           </div>
+         </div>
+       </div>
+    </div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script type="text/javascript">
+          var socket = io.connect('http://<%= config.host %>:<%= config.port %>');
+          document.addEventListener('DOMContentLoaded', function() {
+            // M.Carousel.init(elems, {
+            //   fullWidth: true,
+            //   indicators: true
+            // });
+          });
+
+
+          var initData = {
+            questions: []
+          }
+          var app = new Vue({
+            el: '#question',
+            data: Object.assign({}, initData)
+          })
+          socket.on('front-question', function(data){
+            if(data.action === "listing"){
+              app.questions = data.questions
+              setTimeout(function(){
+                var elems = document.querySelectorAll('.carousel');
+                M.Carousel.init(elems, {
+                  fullWidth: true,
+                  indicators: true
+                });
+              }, 100)
+            }
+          })
+
+    </script>
+  </body>
+</html>

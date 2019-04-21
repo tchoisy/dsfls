@@ -1,0 +1,83 @@
+<html>
+  <head>
+    <title>QUESTION CONTROL FRONT</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="/css/master.css">
+  </head>
+  <body class="overflow">
+
+
+    <div class="question-container control">
+      <div v-bind:class="{ 'question-wrapper': true, 'active': displayOn, 'active-reponse': displayReponseOn}" id="question">
+        <div class="progress">
+            <div class="determinate" v-bind:style="{width: progress}"></div>
+        </div>
+        <div class="question-intitule">{{question.intitule}}</div>
+        <div class="question-reponses">
+          <div v-for="(reponse, index) in question.reponses" v-bind:class="{'bonne-reponse': reponse.isGood, 'question-reponse-wrapper': true, 'selected': (index == reponseSelected)}">
+            <div class="question-reponse">{{reponse.label}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script type="text/javascript">
+          var socket = io.connect('http://<%= config.host %>:<%= config.port %>');
+          var initData = {
+            question: {},
+            displayOn: false,
+            displayReponseOn: false,
+            reponseSelected: null,
+            time: 10,
+            currentTime: {seconds: 10, secondTenths: 0}
+          }
+          var app = new Vue({
+            el: '#question',
+            data: Object.assign({}, initData),
+            computed: {
+              progress: function () {
+                var current = ((this.currentTime.seconds * 1000) + (this.currentTime.secondTenths * 100)) / 1000
+                return ((1- (current / (this.time )) ) * 100) + '%'
+              },
+              afficheur: function () {
+                return this.currentTime.seconds +':'+this.currentTime.secondTenths
+              }
+            }
+          })
+          socket.on('front-question', function(data){
+            console.log(data, initData)
+            if(data.action === "affiche-question"){
+              app.question = data.question
+              app.displayOn = true
+            } else if(data.action === "affiche-reponse"){
+              app.displayReponseOn = true
+            } else if(data.action === "select-reponse"){
+              app.reponseSelected = data.idReponse
+            } else if(data.action === "display-off"){
+              app.question = initData.question
+              app.displayOn = initData.displayOn
+              app.displayReponseOn = initData.displayReponseOn
+              app.reponseSelected = initData.reponseSelected
+              resetCountdown(initData)
+            }
+          })
+
+
+          socket.on('front-countdown', function(data){
+            if(data.action == "change"){
+              resetCountdown(data.content)
+            }
+          })
+
+          function resetCountdown(data){
+            app.currentTime = data.currentTime
+            app.time = data.time
+          }
+
+    </script>
+  </body>
+</html>

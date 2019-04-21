@@ -1,0 +1,38 @@
+.back-questions{
+
+.questions-list{
+  .intitule{
+    font-size: 16px;
+    line-height: 16px;
+  }
+  .card-content{
+    padding: 8px;
+  }
+  .card-action{
+    font-size: 14px;
+    cursor: pointer;
+  }
+  counter-reset: question;
+  .cdr-question{
+    counter-increment: question;
+    .card-image{
+      &:before{
+        content: counter(question);
+        position: absolute;
+        top: 5px;
+        left: 50%;
+        height: 50px;
+        width: 50px;
+        background: rgba(0,0,0,0.5);
+        color: white;
+        text-align:center;
+        font-size: 32px;
+        transform: translateX(-50%);
+        border-radius: 25px;
+        z-index: 400;
+      }
+    }
+  }
+}
+
+}

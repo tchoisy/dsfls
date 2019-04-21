@@ -1,0 +1,73 @@
+<html>
+  <head>
+    <title>PARCOURSUP FRONT</title>
+    <link rel="stylesheet" href="/css/master.css">
+  </head>
+  <body class="overflow">
+    <div class="parcoursup-question-container">
+      <div v-bind:class="{ 'wrapper': true, 'active': displayOn, 'active-reponse': displayReponseOn}" id="question">
+        <div class="main-question">
+          <div class="main-question-intitule">{{question.intitule}}</div>
+          <div v-bind:class="{'main-question-reponses': true, 'multiple': question.reponses !== undefined && question.reponses.length > 1}">
+            <div v-for="(reponse, index) in question.reponses" v-bind:class="{ 'subquestion': true}">
+              <div class="subquestion-intitule">{{reponse.question}}</div>
+              <div v-bind:class="{'subquestion-choices': true, 'two-line': reponse.choices.length > 3}">
+                <div v-for="(choice, indexChoice) in reponse.choices" v-bind:class="{'bonne-reponse': choice.isGood, 'choice-wrapper': true}">
+                  <div class="choice">{{choice.label}}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="parcoursup-explication">
+          <div class="parcoursup-explication-wrapper">
+            <div class="explication-title">EXPLICATIONS</div>
+            <div class="explication-content">{{question.explication}}</div>
+
+          </div>
+        </div>
+        <div class="parcoursup-indication-question">
+          <div class="indication-numero">{{numeroQuestion}}</div>
+          <div class="indication-total">{{totalQuestion}}</div>
+        </div>
+      </div>
+    </div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js" charset="utf-8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script type="text/javascript">
+          var socket = io.connect('http://<%= config.host %>:<%= config.port %>');
+          var initData = {
+            question: {},
+            displayOn: false,
+            displayReponseOn: false,
+            numeroQuestion: "",
+            totalQuestion: ""
+          }
+          var app = new Vue({
+            el: '#question',
+            data: Object.assign({}, initData)
+          })
+          socket.on('front-parcoursup', function(data){
+            console.log(data, initData)
+            if(data.action === "affiche-question"){
+              app.question = data.question
+              app.displayOn = true
+              app.numeroQuestion = data.numeroQuestion
+              app.totalQuestion = data.totalQuestion
+            } else if(data.action === "affiche-reponse"){
+              app.displayReponseOn = true
+            } else if(data.action === "display-off"){
+              app.question = initData.question
+              app.displayOn = initData.displayOn
+              app.displayReponseOn = initData.displayReponseOn
+              app.numeroQuestion = initData.numeroQuestion
+              app.totalQuestion = initData.totalQuestion
+            }
+          })
+
+
+    </script>
+  </body>
+</html>

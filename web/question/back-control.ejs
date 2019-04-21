@@ -1,0 +1,157 @@
+<html>
+  <head>
+    <title>HANDSONTABLE TEST</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable-pro/dist/handsontable.full.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="/css/master.css">
+  </head>
+  <body class="back-questions control">
+    <a class="waves-effect waves-light btn modal-trigger" href="#modal1">Rentrer les questions</a>
+
+    <!-- Modal Structure -->
+    <div id="modal1" class="modal modal-question">
+      <div class="modal-content">
+        <div id="example1"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="extract btn">Extract</button>
+      </div>
+    </div>
+
+    <iframe src="http://192.168.6.10:12345/countdown/back" width="100%" height="100px" style="position: fixed;"></iframe>
+
+    <div class="questions-list" id="questions">
+      <ul class="collapsible">
+        <li v-for="(question, index) in questions" v-bind:class="{ 'selected': (index === currentQuestion), 'question': true}">
+          <div class="collapsible-header header">
+            <i class="material-icons">grain</i>
+            {{question.intitule}}
+            <span class="badge">
+              <span class="new badge blue" v-on:click="afficheReponse(index, $event)">Reponse</span>
+              <span class="new badge green" v-on:click="send(index, $event)">Afficher</span>
+            </span>
+          </div>
+          <div class="collapsible-body question-body">
+            <a  v-for="(reponse, indRep) in question.reponses" v-bind:class="{ 'blue': reponse.isGood, 'waves-effect': true, 'waves-light': true, 'btn-large': true}" v-on:click="selectReponse(index, indRep)">
+              <i class="material-icons left">cloud</i>
+              {{reponse.label}}
+            </a>
+          </div>
+        </li>
+      </ul>
+      <div class="fixed-action-btn">
+        <a class="btn-floating btn-large red" v-on:click="hide">
+          <i class="large material-icons">highlight_off</i>
+        </a>
+      </div>
+    </div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js" charset="utf-8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/handsontable-pro/dist/handsontable.full.min.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script type="text/javascript">
+    var socket = io.connect('http://<%= config.host %>:<%= config.port %>');
+    document.addEventListener('DOMContentLoaded', function() {
+      var elems = document.querySelectorAll('.fixed-action-btn');
+      var instances = M.FloatingActionButton.init(elems, {});
+      var elems2 = document.querySelectorAll('.collapsible');
+      var instances2 = M.Collapsible.init(elems2, {});
+      var elemsModal = document.querySelectorAll('.modal');
+      var instancesModal = M.Modal.init(elemsModal, {});
+    });
+
+    // var socket = io.connect('http://<%= config.host %>:<%= config.port %>');
+    var example = document.getElementById('example1');
+
+    var hot1 = new Handsontable(example, {
+      // data: initData,
+      // colHeaders: ['ID', 'First Name', 'Last Name', 'Address'],
+      colHeaders: ['Questions', 'Proposition 1', 'Proposition 2', 'Proposition 3', 'Proposition 4', 'Bonne Reponse 1 ?', 'Bonne Reponse 2 ?', 'Bonne Reponse 3 ?', 'Bonne Reponse 4 ?'],
+      width: 1000,
+      height: 320,
+      startCols: 9,
+      startRows: 60,
+      colWidths: 100,
+      rowHeights: 23,
+      rowHeaders: true,
+      colHeaders: true
+    });
+    var app2 = new Vue({
+      el: '#questions',
+      data: {
+        questions: [],
+        currentQuestion: null
+      },
+      methods: {
+        send: function (index, e) {
+          socket.emit('back', {type: "question", content: {
+            action: "affiche-question" ,
+            question: this.questions[index]
+          }});
+          this.currentQuestion = index
+          e.stopPropagation()
+          M.toast({html: 'Question : ' + this.questions[index].intitule, timeRemaining: 1000})
+          return true;
+        },
+        afficheReponse: function (iQuestion, e) {
+          if(iQuestion === this.currentQuestion) {
+            socket.emit('back', {type: "question", content: {
+              action: "affiche-reponse"
+            }});
+          }
+          e.stopPropagation()
+          return true;
+        },
+        selectReponse: function (iQuestion, iReponse) {
+          if(iQuestion === this.currentQuestion) {
+            socket.emit('back', {type: "question", content: {
+              action: "select-reponse",
+              idReponse: iReponse
+            }});
+          }
+          M.toast({html: 'Reponse : ' + this.questions[iQuestion].reponses[iReponse].label, timeRemaining: 1000})
+          return true;
+        },
+        hide: function(){
+          socket.emit('back', {type: "question", content: {
+            action: "display-off"
+          }});
+          this.currentQuestion = null;
+          M.toast({html: 'Hide question !'})
+        }
+      }
+    })
+
+
+    document.querySelector('.extract').addEventListener('click', function(){
+      var data = hot1.getData()
+      var questions = []
+      data.forEach(function(question){
+        var q = {
+          intitule: "",
+          reponses: []
+        }
+        if(question[0] !== "" && question[0] !== null){
+          q.intitule = question[0];
+          for(var i= 1; i< 5; i++){
+            q.reponses.push({
+              label: question[i],
+              isGood: (question[i+4] !== "" && question[i+4] !== null),
+            })
+          }
+          questions.push(q)
+        }
+      })
+      app2.questions = questions
+    })
+
+
+
+
+    </script>
+  </body>
+</html>

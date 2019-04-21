@@ -1,0 +1,171 @@
+<html>
+  <head>
+    <title>TEST BACK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="../css/master.css">
+  </head>
+  <body>
+    <h1>Score fightSchool</h1>
+    <div class="score-back" id="score-back">
+      <div class="row">
+        <div class="col s12 m5">
+          <div class="card light-blue darken-3 z-depth-3">
+            <div class="card-content white-text">
+              <div class="input-field col s12">
+                <input id="last_name" type="text" class="validate" v-model="teamOne.name">
+                <label for="last_name">Team Name</label>
+              </div>
+              <div class="input-field col s12">
+                <input id="last_name" type="text" class="validate" v-model="teamOne.short">
+                <label for="last_name">Short Name</label>
+              </div>
+              <div class="row">
+                <div class="col s12 center-align">
+                  <p>{{ teamOne.score }}</p>
+                </div>
+              </div>
+            </div>
+            <div class="card-action center-align">
+              <a v-on:click="add('teamOne')">ADD</a>
+              <a v-on:click="less('teamOne')">LESS</a>
+            </div>
+          </div>
+        </div>
+        <div class="col s12 m2">
+          <div class="card light-blue darken-1 z-depth-2">
+            <div class="card-action center-align cup">
+              <div><a class="waves-effect waves-light btn light-blue darken-4" v-on:click="majScore()">MAJ</a></div>
+            </div>
+          </div>
+          <div class="card light-blue darken-1 z-depth-2">
+            <div class="card-action center-align cup">
+              <div><a class="waves-effect waves-light btn light-blue darken-4" v-on:click="animCup()">ANIM CUP</a></div>
+              <div><a class="waves-effect waves-light btn light-blue darken-4" v-on:click="showCup()">SHOW CUP</a></div>
+              <div><a class="waves-effect waves-light btn light-blue darken-4" v-on:click="hideCup()">HIDE CUP</a></div>
+            </div>
+          </div>
+          <div class="card light-blue darken-1 z-depth-2">
+            <div class="card-action center-align cup">
+              <div><a class="waves-effect waves-light btn light-blue darken-4" v-on:click="show()">SHOW</a></div>
+              <div><a class="waves-effect waves-light btn light-blue darken-4" v-on:click="hide()">HIDE</a></div>
+            </div>
+          </div>
+        </div>
+        <div class="col s12 m5">
+          <div class="card light-blue darken-3 z-depth-3">
+            <div class="card-content white-text">
+              <div class="input-field col s12">
+                <input id="last_name" type="text" class="validate" v-model="teamTwo.name">
+                <label for="last_name">Team Name</label>
+              </div>
+              <div class="input-field col s12">
+                <input id="last_name" type="text" class="validate" v-model="teamTwo.short">
+                <label for="last_name">Short Name</label>
+              </div>
+              <div class="row">
+                <div class="col s12 center-align">
+                  <p>{{ teamTwo.score }}</p>
+                </div>
+              </div>
+            </div>
+            <div class="card-action center-align">
+              <a v-on:click="add('teamTwo')">ADD</a>
+              <a v-on:click="less('teamTwo')">LESS</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script type="text/javascript">
+          var socket = io.connect('http://<%= config.host %>:<%= config.port %>');
+
+
+          var initData = {
+             teamOne: {
+               name: "",
+               short:"",
+               score: 0
+             },
+             teamTwo: {
+               name: "",
+               short:"",
+               score: 0
+             }
+          }
+          var app = new Vue({
+            el: '#score-back',
+            data: Object.assign({}, initData),
+            methods: {
+              add: function(id){
+                this[id].score += 1
+              },
+              less: function(id){
+                this[id].score -= 1
+              },
+              format(){
+                var data =  {
+                  teamOne: Object.assign({},this.teamOne),
+                  teamTwo: Object.assign({},this.teamTwo)
+                }
+                data.teamOne.score = data.teamOne.score + ' pts'
+                data.teamTwo.score = data.teamTwo.score + ' pts'
+                return data
+              },
+              animCup: function () {
+                var data = this.format()
+                socket.emit('back', {type: "score-cup", content: {action: "change", values: data}});
+                socket.emit('back', {type: "score-cup", content: {action: "activate", values: data}});
+                setTimeout(function(){
+                  socket.emit('back', {type: "score-cup", content: {action: "deactivate", values: data}});
+                  setTimeout(function(){
+                    socket.emit('back', {type: "score-cup", content: {action: "reset", values: data}});
+                  }, 2000)
+                }, 6000)
+
+                return true;
+              },
+              showCup: function () {
+                var data = this.format()
+                socket.emit('back', {type: "score-cup", content: {action: "activate", values: data}});
+                return true;
+              },
+              hideCup: function () {
+                var data = this.format()
+                socket.emit('back', {type: "score-cup", content: {action: "deactivate", values: data}});
+                setTimeout(function(){
+                  socket.emit('back', {type: "score-cup", content: {action: "reset", values: data}});
+                }, 2000)
+                return true;
+              },
+              majScore: function () {
+                socket.emit('back', {type: "score-cup", content: {action: "change", values: this.format()}});
+                socket.emit('back', {type: "score", content: {action: "change", values: {
+                  teamOne: Object.assign({},this.teamOne),
+                  teamTwo: Object.assign({},this.teamTwo)
+                }}});
+                return true;
+              },
+              show: function () {
+                socket.emit('back', {type: "score", content: {action: "change", values: {
+                  teamOne: Object.assign({},this.teamOne),
+                  teamTwo: Object.assign({},this.teamTwo)
+                }}});
+                socket.emit('back', {type: "score", content: {action: "show", values: {}}});
+                return true;
+              },
+              hide: function () {
+                socket.emit('back', {type: "score", content: {action: "hide", values: {}}});
+                return true;
+              }
+            }
+        })
+
+
+    </script>
+  </body>
+</html>

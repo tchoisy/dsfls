@@ -1,0 +1,55 @@
+<html>
+  <head>
+    <title>SCORE FRONT</title>
+    <link rel="stylesheet" href="/css/master.css">
+  </head>
+  <body class="overflow">
+    <div class="score-front" id="score-front">
+      <div v-bind:class="{'score-front-container': true, 'active': displayOn}">
+        <div class="score-team-one wrapper">
+          <div class="score-team">{{teamOne.short}}</div>
+        </div>
+        <div class="score-score-one scoring">{{teamOne.score}}</div>
+        <div class="score-score-two scoring">{{teamTwo.score}}</div>
+        <div class="score-team-two wrapper">
+          <div class="score-team">{{teamTwo.short}}</div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js" charset="utf-8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script type="text/javascript">
+          var socket = io.connect('http://<%= config.host %>:<%= config.port %>');
+          var initData = {
+            displayOn: false,
+             teamOne: {
+               name: "",
+               short:"",
+               score: 0
+             },
+             teamTwo: {
+               name: "",
+               short:"",
+               score: 0
+             }
+          }
+          var app = new Vue({
+            el: '#score-front',
+            data: Object.assign({}, initData)
+          })
+          socket.on('front-score', function(data){
+            if(data.action == "change"){
+              app.teamOne = data.values.teamOne
+              app.teamTwo = data.values.teamTwo
+            } else if(data.action == "show"){
+              app.displayOn = true
+            } else if(data.action == "hide"){
+              app.displayOn = false
+            }
+          })
+
+
+    </script>
+  </body>
+</html>

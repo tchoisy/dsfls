@@ -1,0 +1,57 @@
+<html>
+  <head>
+    <title>TEST FRONT</title>
+    <link rel="stylesheet" href="/css/master.css">
+  </head>
+  <body class="overflow">
+
+
+    <div class="question-container">
+      <div v-bind:class="{ 'question-wrapper': true, 'active': displayOn, 'active-reponse': displayReponseOn}" id="question">
+        <div class="question-intitule">{{question.intitule}}</div>
+        <div class="question-reponses">
+          <div v-for="(reponse, index) in question.reponses" v-bind:class="{'bonne-reponse': reponse.isGood, 'question-reponse-wrapper': true, 'selected': (index == reponseSelected)}">
+            <div class="question-reponse">{{reponse.label}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js" charset="utf-8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script type="text/javascript">
+          var socket = io.connect('http://<%= config.host %>:<%= config.port %>');
+          var initData = {
+            question: {},
+            displayOn: false,
+            displayReponseOn: false,
+            reponseSelected: null
+          }
+          var app = new Vue({
+            el: '#question',
+            data: Object.assign({}, initData)
+          })
+          socket.on('front-question', function(data){
+            console.log(data, initData)
+            if(data.action === "affiche-question"){
+              app.question = data.question
+              app.displayOn = true
+            } else if(data.action === "affiche-reponse"){
+              app.displayReponseOn = true
+            } else if(data.action === "select-reponse"){
+              app.reponseSelected = data.idReponse
+            } else if(data.action === "display-off"){
+              console.log("OOFFFF", initData)
+              app.question = initData.question
+              app.displayOn = initData.displayOn
+              app.displayReponseOn = initData.displayReponseOn
+              app.reponseSelected = initData.reponseSelected
+              console.log(app.displayReponseOn, initData.displayReponseOn)
+            }
+          })
+
+
+    </script>
+  </body>
+</html>

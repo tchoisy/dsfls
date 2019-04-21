@@ -1,0 +1,79 @@
+<html>
+  <head>
+    <title>CODEDELAROUTE  FRONT LIST</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="/css/master.css">
+  </head>
+  <body class="overflow">
+
+
+    <div class="codedelaroute-list-container" id="question">
+      <div class="carousel carousel-slider center">
+         <div class="carousel-item white-text" v-for="question in questions">
+           <div class="support-visuel"><img v-bind:src="question.image"/></div>
+           <div class="content">
+             <h2>{{question.intitule}}</h2>
+             <div class="question-details">
+               <div class="reponses">
+                 <div v-bind:class="{'main-question-reponses': true, 'multiple': question.reponses !== undefined && question.reponses.length > 1}">
+                   <div v-for="(reponse, index) in question.reponses" v-bind:class="{ 'subquestion': true}">
+                     <div class="subquestion-intitule">{{reponse.question}}</div>
+                     <div v-bind:class="{'subquestion-choices': true, 'two-line': reponse.choices.length > 3}">
+                       <div v-for="(choice, indexChoice) in reponse.choices" v-bind:class="{'bonne-reponse': choice.isGood, 'choice-wrapper': true}">
+                         <div class="choice">{{choice.label}}</div>
+                       </div>
+                     </div>
+                   </div>
+                 </div>
+               </div>
+               <div class="explication">
+                 <div class="codedelaroute-explication-wrapper">
+                   <div class="explication-content">
+                     <div class="explication-content">{{question.explication}}</div>
+
+                   </div>
+                 </div>
+               </div>
+             </div>
+           </div>
+         </div>
+       </div>
+    </div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script type="text/javascript">
+          var socket = io.connect('http://<%= config.host %>:<%= config.port %>');
+          document.addEventListener('DOMContentLoaded', function() {
+            // M.Carousel.init(elems, {
+            //   fullWidth: true,
+            //   indicators: true
+            // });
+          });
+
+
+          var initData = {
+            questions: []
+          }
+          var app = new Vue({
+            el: '#question',
+            data: Object.assign({}, initData)
+          })
+          socket.on('front-codedelaroute', function(data){
+            if(data.action === "listing"){
+              app.questions = data.questions
+              setTimeout(function(){
+                var elems = document.querySelectorAll('.carousel');
+                M.Carousel.init(elems, {
+                  fullWidth: true,
+                  indicators: true
+                });
+              }, 100)
+            }
+          })
+
+    </script>
+  </body>
+</html>

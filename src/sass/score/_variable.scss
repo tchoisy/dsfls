@@ -1,0 +1,85 @@
+$main-color: #014358;
+$main-font: 'Roboto', sans-serif;
+
+$display-wrapper-height: 30px;
+
+// BACK BAND
+$back-band-left-origin-translate: 100%;
+$back-band-right-origin-translate: $back-band-left-origin-translate * -1;
+
+$back-band-left-middle-translate: 0px;
+$back-band-right-middle-translate: $back-band-left-middle-translate * -1;
+
+$back-band-left-end-translate: 0px;
+$back-band-right-end-translate: $back-band-left-end-translate * -1;
+
+
+
+// FRONT BAND
+$front-band-left-origin-translate: 100%;
+$front-band-right-origin-translate: $front-band-left-origin-translate * -1;
+$front-band-left-end-translate: -100%;
+$front-band-right-end-translate: $front-band-left-end-translate * -1;
+$front-band-background: linear-gradient(to right, transparent 5%, $main-color 15%, $main-color 85%, transparent 95%);
+
+// TEXT
+$text-margin: 60px;
+$text-line: $display-wrapper-height;
+$text-size: $text-line / 2;
+$text-radius: $display-wrapper-height /2;
+
+$name-shadow-color: rgba(0,0,0,0.15);
+$name-in-width-origin: 0;
+$name-in-width-end: 100%;
+
+
+
+// TIMING
+$cup-active-time: 1s;
+$cup-active-delay: 0s;
+
+$fond-cup-active-time: 1s;
+$fond-cup-active-delay: $cup-active-time * 0.5;
+
+
+$anse-text-delay: $fond-cup-active-delay + ($fond-cup-active-time*0.8);
+
+$anse-left-active-time: 0.8s;
+$anse-left-active-delay: $anse-text-delay;
+$anse-right-active-time: $anse-left-active-time;
+$anse-right-active-delay: $anse-left-active-delay;
+
+$letter-active-time: 0.8s;
+@function letter-active-delay($i, $ref){
+  @return ($i/10)+$ref
+}
+
+$logo-deactive-time: 1s;
+$logo-deactive-delay: 1s;
+
+$name-in-time: 1s;
+$name-in-delay: $anse-text-delay;
+
+$name-after-time: 0.1s;
+$name-after-delay: $name-in-delay + ($name-in-time /4);
+
+$back-real-time: 1s;
+$back-band-animation-time: $back-real-time * 0.8;
+$back-band-animation-delay: $name-in-time + ($name-in-time * 0.95);
+
+$reference-letter-active-delay: $back-band-animation-delay;
+
+$container-active-time: $back-real-time * 0.2;
+$container-active-delay: $back-band-animation-delay + $back-band-animation-time;
+
+$front-band-transition-time: 1s;
+$front-band-transition-delay: $back-band-animation-delay + ($back-band-animation-time*2);
+
+$name-out-time: 0s;
+$name-out-delay: $front-band-transition-delay + ($front-band-transition-time/2);
+
+$points-in-time: $name-out-time;
+$points-in-delay: $name-out-delay;
+
+$content-out-time: 1s;
+$content-out-delay: 0s;

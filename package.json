@@ -1,0 +1,45 @@
+{
+  "name": "dsfls",
+  "version": "2.0.0",
+  "description": "Digital Signage For Live Stream",
+  "productName": "dsfls",
+  "main": "index.js",
+  "scripts": {
+    "dev-socket": "nodemon socket.js",
+    "dev-client": "nodemon client.js",
+    "dev-receiver": "nodemon receiver.js",
+    "sass": "cd src && gulp dev",
+    "dev-youtube-comment": "cd web/youtube/node && node youtube.js",
+    "dev-youtube": "node youtube.js",
+    "start-electron": "electron .",
+    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=src/assets/icon/logo.icns --prune=true --out=release-builds",
+    "package-win": "electron-packager . dsfls-app --overwrite --asar=true --platform=win32 --arch=ia32 --icon=src/assets/icon/logo.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"DSFLS\"",
+    "package-linux": "electron-packager . dsfls-app --overwrite --asar=true --platform=linux --arch=x64 --icon=src/assets/icon/logo.png --prune=true --out=release-builds",
+    "create-installer-mac": "electron-installer-dmg ./release-builds/dsfls-app-darwin-x64/dsfls-app.app dsfls-app --out=release-builds --overwrite --icon=src/assets/icon/logo.icns"
+  },
+  "author": "Tommy CHOISY",
+  "license": "GNU AGPL",
+  "dependencies": {
+    "ejs": "^2.6.1",
+    "electron": "^4.1.4",
+    "path": "^0.12.7",
+    "socket.io": "^2.1.1",
+    "twitter": "^1.7.1",
+    "url": "^0.11.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.1.2",
+    "@babel/preset-env": "^7.1.0",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.0.4",
+    "gulp": "^3.9.1",
+    "gulp-sass": "^4.0.1",
+    "minimist": "^1.2.0",
+    "socket.io-client": "^2.1.1",
+    "webpack": "^4.23.1",
+    "webpack-dev-server": "^3.1.10",
+    "electron-installer-dmg": "^2.0.0",
+    "electron-packager": "^13.1.1",
+    "electron-winstaller": "^3.0.4"
+  }
+}

@@ -1,0 +1,116 @@
+$primary-color: #1D414C;
+$secondary-color: #336879;
+$third-color: white;
+.youtube-container{
+  & *{
+    box-sizing: border-box;
+  }
+  position:absolute;
+  width: 100%;
+  height: 100%;
+  color: white;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  font-size: 20px;
+  .wrapper{
+    width: 100%;
+    position: relative;
+    header{
+      overflow: hidden;
+      .header-text{
+        text-align: center;
+        padding: 10px;
+        background: $primary-color;
+        border-bottom: 4px solid $secondary-color;
+        transform: translateX(100%);
+      }
+    }
+    footer{
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      opacity: 0;
+      background: $primary-color;
+      border-top: 4px solid $secondary-color;
+      .content{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        padding: 10px;
+      }
+      small{
+        font-weight: 300;
+        font-size: 10px;
+      }
+    }
+    .classement-content{
+      display: table;
+      border-collapse: separate;
+      width: 100%;
+      overflow:hidden;
+      position: relative;
+      .player-wrapper{
+        display: table-row;
+        margin-bottom: -4px;
+        background: $third-color;
+        color: $primary-color;
+        position: relative;
+        // @for $i from 1 through 10 {
+          // &:nth-child(#{$i}){
+            transform: translateX(100%);
+          // }
+        // }
+        // transform: translateY(-100%);
+        opacity: 0;
+        .cell{
+          display: table-cell;
+          vertical-align: middle;
+          border-bottom: 4px solid $secondary-color;
+          position: relative;
+        }
+        .avatar{
+          img{
+            max-height: 50px;
+          }
+        }
+        .name{
+          width: 100%;
+          padding: 10px;
+        }
+        .points{
+          text-align: center;
+          padding: 10px 20px;
+          border-left: 1px dashed $secondary-color;
+        }
+      }
+    }
+
+    &.active{
+      header{
+        .header-text{
+          transform: translateX(0);
+          transition: transform 1s ease;
+        }
+      }
+      footer{
+        // .content{
+          opacity: 1;
+          transition: opacity 1s ease 3s;
+        // }
+      }
+      .classement-content{
+        .player-wrapper{
+          transform: translateX(0);
+          opacity: 1;
+          @for $i from 1 through 10 {
+            &:nth-child(#{$i}){
+              // transition: all 1s ease #{1+($i/10)}s;
+              transition: all 1s ease #{1+($i/10)}s;
+            }
+          }
+        }
+      }
+    }
+  }
+}

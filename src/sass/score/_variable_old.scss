@@ -1,0 +1,27 @@
+$back-init-pos: 100;
+$back-inter-pos: 18;
+$back-end-pos: 25;
+$time: 1s;
+$time-before: 2s;
+$delay-animation-2: $time+($time/2);
+$delay-change-name-score: ($delay-animation-2 + ($time-before/4));
+
+
+
+
+// SCORE
+$display-wrapper-height: 30px;
+$score-main-color: MidnightBlue;
+
+$transition-name-score-width: 110%;
+$transition-name-score-background: linear-gradient(to right, transparent 5%, $score-main-color 15%, $score-main-color 85%, transparent 95%);
+
+$text-min-width: ($display-wrapper-height /2) * 10;
+$text-line-height: $display-wrapper-height;
+$text-size: $display-wrapper-height/ 2;
+$text-distance: 50px;
+
+
+$band-score-width: 100%;
+
+$display-content-radius: $display-wrapper-height / 2;

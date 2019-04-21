@@ -1,0 +1,278 @@
+body{
+  // background: grey;
+  color: white;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+@keyframes contentDeactivate {
+  from {
+    width: 100%;
+  }
+  to{
+    width: 0%;
+  }
+}
+@keyframes displayContent {
+  from {
+    width: 0
+  }
+  to{
+    width: 200%;
+  }
+}
+@keyframes beforeLeft {
+  from {
+    transform: translateX(110%);
+  }
+  to{
+    transform: translateX(-110%);
+  }
+}
+@keyframes beforeRight {
+  from {
+    transform: translateX(-110%);
+  }
+  to{
+    transform: translateX(110%);
+  }
+}
+@keyframes backLeft {
+  from {
+    transform: translateX(100%);
+  }
+  75%{
+    transform: translateX(18%);
+  }
+  to{
+    transform: translateX(25%);
+  }
+}
+@keyframes backRight {
+  from {
+    transform: translateX(-100%);
+  }
+  75%{
+    transform: translateX(-18%);
+  }
+  to{
+    transform: translateX(-25%);
+  }
+}
+.score-container{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform-origin: center;
+  transform: scale(1.5);
+  // background: rgba(232,123,23, 0.5);
+
+
+  .display-wrapper{
+    // background: rgba(12,21,123, 0.5);
+    height: $display-wrapper-height;
+    position:absolute;
+    width: 100%;
+    left: O;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    .display-container{
+      height: 100%;
+      // background: rgba(132,210,123, 0.5);
+      flex:0.2;
+      position: relative;
+      overflow: hidden;
+      .display-content{
+        height: 100%;
+        overflow: hidden;
+        position: absolute;
+        width: 0;
+        &:after{
+          position: absolute;
+          width: $display-wrapper-height + ($display-wrapper-height/2);
+          height: $display-wrapper-height + ($display-wrapper-height/2);
+          top: $display-wrapper-height/-4;
+          z-index: 60000;
+        }
+        .before{
+          background: $score-main-color ;
+          position: absolute;
+          height: 100%;
+          width: $band-score-width;
+          z-index: 10;
+        }
+        .after{
+          position: absolute;
+          width: $band-score-width;
+          height: 100%;
+          overflow: hidden;
+          z-index: 30;
+          &:after{
+            content: '';
+            position: absolute;
+            width: $transition-name-score-width;
+            height: 100%;
+            z-index: 30;
+            // background: $transition-name-score-background;
+            background: red;
+          }
+        }
+        .text{
+          position: absolute;
+          height: 100%;
+          min-width: $text-min-width;
+          line-height: $text-line-height;
+          font-size: $text-size;
+          z-index: 20;
+        }
+        .name-text{
+          visibility: visible;
+        }
+        .points-text{
+          visibility: hidden;
+        }
+      }
+      &.left {
+        .display-content{
+          right: 0;
+          border-radius: $display-content-radius 0 0 $display-content-radius;
+          // box-shadow: 5px 0px 35px -10px rgba(0,0,0,0.15) inset;
+          // box-shadow: inset 20px 0 30px -15px black;
+          &:after{
+            box-shadow: inset 20px 0 30px -15px rgba(0,0,0,0.15);
+            left: 0;
+            border-radius: 50px 0 0 50px ;
+          }
+          .before{
+            right: 0;
+            transform: translateX(100%);
+          }
+          .after{
+            right: 0;
+            transform: translateX(25%);
+            &:after{
+              transform: translateX(110%);
+            }
+          }
+          .text{
+            right: $text-distance;
+            text-align: right;
+          }
+        }
+      }
+      &.right {
+        .display-content{
+          left: 0;
+          border-radius: 0 $display-content-radius $display-content-radius 0;
+          // box-shadow: -5px 0px 35px -10px rgba(0,0,0,0.15) inset;
+          // box-shadow: 5px 0 35px -10px white , -5px 0 35px -10px white ;
+          &:after{
+            box-shadow: inset -20px 0 30px -15px rgba(0,0,0,0.15);
+            right: 0;
+            border-radius: 0 50px 50px 0;
+          }
+          .before{
+            left: 0;
+            transform: translateX(-100%);
+          }
+          .after{
+            left: 0;
+            transform: translateX(-25%);
+            &:after{
+              transform: translateX(-110%);
+            }
+          }
+          .text{
+            left: $text-distance;
+          }
+        }
+      }
+
+    }
+  }
+
+
+    &.active{
+      .display-wrapper{
+        .display-container{
+          .display-content{
+            &:after{
+              content: '';
+            }
+            .points-text{
+              transition: visibility 0.01s linear $delay-change-name-score;
+              visibility: visible;
+            }
+            .name-text{
+              transition: visibility 0.01s linear $delay-change-name-score;
+              visibility: hidden;
+            }
+          }
+          &.left{
+            .display-content{
+              .before{
+                animation: backLeft $time linear forwards;
+              }
+              .after{
+                &:after{
+                  animation: beforeLeft $time-before linear $delay-animation-2 forwards;
+                }
+              }
+            }
+          }
+          &.right{
+            .display-content{
+              .before{
+                animation: backRight $time linear forwards;
+              }
+              .after{
+                &:after{
+                  animation: beforeRight $time-before linear $delay-animation-2 forwards;
+                }
+              }
+            }
+          }
+          .display-content{
+            animation: displayContent $time linear forwards;
+          }
+        }
+      }
+    }
+
+    &.deactive{
+      .display-wrapper{
+        .display-container{
+          .display-content{
+            width: 0%;
+            border-radius: 0;
+            animation: contentDeactivate 10s linear;
+            &:after{
+              content: none;
+            }
+            .before{
+              width: 100%;
+            }
+          }
+          &.left{
+            .display-content{
+              .before{
+                width: 100%;
+                transform: translateX(0%);
+              }
+            }
+          }
+          &.right{
+            .display-content{
+              .before{
+                width: 100%;
+                transform: translateX(0%);
+              }
+            }
+          }
+        }
+      }
+    }
+}

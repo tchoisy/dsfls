@@ -1,0 +1,255 @@
+
+
+<html>
+  <head>
+    <title>CODEDELAROUTE TEST</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable-pro/dist/handsontable.full.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="/css/master.css">
+  </head>
+  <body class="back-questions">
+    <a class="waves-effect waves-light btn modal-trigger" href="#modal1">Rentrer les questions</a>
+
+    <!-- Modal Structure -->
+    <div id="modal1" class="modal modal-question">
+      <div class="modal-content">
+        <div id="tableur"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="extract btn">Extract</button>
+      </div>
+    </div>
+
+    <div class="questions-list" id="questions">
+      <!-- <ul class="collapsible">
+        <li v-for="(question, index) in questions" v-bind:class="{ 'selected': (index === currentQuestion), 'question': true}">
+          <div class="collapsible-header header">
+            <i class="material-icons">grain</i>
+            {{question.intitule}}
+          </div>
+          <div class="collapsible-body question-body">
+            <div class="col s12 m7">
+              <div class="card horizontal">
+                <div class="card-image">
+                  <img v-bind:src="question.image" class="materialboxed" width="200">
+                </div>
+                <div class="card-stacked">
+                  <div class="card-content">
+                    <div v-for="(reponse, indRep) in question.reponses" >
+                      <blockquote>
+                        <h5>{{reponse.question}}</h5>
+                        <div v-for="(choice, indChoice) in reponse.choices" v-bind:class="{ 'reponse': true, 'bonne-reponse': choice.isGood}">
+                          {{choice.label}}
+                        </div>
+                      </blockquote>
+                    </div>                  </div>
+                  <div class="card-action">
+                    <a v-on:click="send(index, $event)">Afficher</a>
+                    <a v-on:click="afficheReponse(index, $event)">Explication</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+          </div>
+        </li>
+      </ul> -->
+
+      <div class="row">
+        <div v-for="(question, index) in questions" v-bind:class="{ 'selected': (index === currentQuestion), ' pink accent-3': (index === currentQuestion), 'col s12 m3 cdr-question': true}">
+          <div class="card small sticky-action">
+            <div class="card-image">
+              <img v-bind:src="question.image" height="150">
+            </div>
+            <div class="card-content">
+              <span class="card-title activator grey-text text-darken-4 intitule">{{question.intitule}}<i class="material-icons right">more_vert</i></span>
+            </div>
+            <div class="card-reveal">
+              <span class="card-title grey-text text-darken-4">Reponses<i class="material-icons right">close</i></span>
+              <div v-for="(reponse, indRep) in question.reponses" >
+                <blockquote>
+                  <p>{{reponse.question}}</p>
+                  <div v-for="(choice, indChoice) in reponse.choices" v-bind:class="{ 'reponse': true, 'bonne-reponse': choice.isGood, 'green-text text-darken-2': choice.isGood}">
+                    {{choice.label}}
+                  </div>
+                </blockquote>
+              </div>
+              <div>{{question.explication}}</div>
+            </div>
+            <div class="card-action">
+              <a v-on:click="send(index, $event)">Afficher</a>
+              <a v-on:click="afficheReponse(index, $event)">Explication</a>
+              <a v-on:click="hide">Retirer</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fixed-action-btn">
+        <a class="btn-floating btn-large red" v-on:click="hide">
+          <i class="large material-icons">highlight_off</i>
+        </a>
+
+        <ul>
+           <li><a class="btn-floating tile" v-on:click="sendAll"><i class="material-icons">send</i></a></li>
+           <li><a class="btn-floating indigo" v-on:click="sendAllImage"><i class="material-icons">image</i></a></li>
+         </ul>
+      </div>
+    </div>
+
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js" charset="utf-8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/handsontable-pro/dist/handsontable.full.min.js" charset="utf-8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script type="text/javascript">
+    var socket = io.connect('http://<%= config.host %>:<%= config.port %>');
+    document.addEventListener('DOMContentLoaded', function() {
+      var elems = document.querySelectorAll('.fixed-action-btn');
+      var instances = M.FloatingActionButton.init(elems, {});
+      var elems2 = document.querySelectorAll('.collapsible');
+      var instances2 = M.Collapsible.init(elems2, {});
+      var elemsModal = document.querySelectorAll('.modal');
+      var instancesModal = M.Modal.init(elemsModal, {});
+      var elemsImg = document.querySelectorAll('.materialboxed');
+    var instancesImg = M.Materialbox.init(elemsImg);
+    });
+
+    var sheet = document.getElementById('tableur');
+
+    var hot1 = new Handsontable(sheet, {
+      colHeaders: ['Questions', 'Proposition 1', 'Proposition 2', 'Proposition 3', 'Proposition 4', 'Bonne Reponse 1 ?', 'Bonne Reponse 2 ?', 'Bonne Reponse 3 ?', 'Bonne Reponse 4 ?', 'Question int 1/2', 'Question int 3/4', 'Explication','Image'],
+      width: 1200,
+      height: 350,
+      startCols: 13,
+      startRows: 100,
+      colWidths: 100,
+      rowHeights: 23,
+      rowHeaders: true,
+      colHeaders: true
+    });
+    var app2 = new Vue({
+      el: '#questions',
+      data: {
+        questions: [],
+        currentQuestion: null
+      },
+      methods: {
+        send: function (index, e) {
+          socket.emit('back', {type: "codedelaroute", content: {
+            action: "affiche-question" ,
+            question: this.questions[index],
+            numeroQuestion: index + 1,
+            totalQuestion: this.questions.length
+          }});
+          console.log(this.questions[index])
+          socket.emit('back', {type: "codedelaroute", content: {
+            action: "image-on" ,
+            img: index,
+          }});
+          this.currentQuestion = index
+          M.toast({html: 'Question : ' + this.questions[index].intitule, timeRemaining: 1000})
+          return true;
+        },
+        afficheReponse: function (iQuestion, e) {
+          if(iQuestion === this.currentQuestion) {
+            socket.emit('back', {type: "codedelaroute", content: {
+              action: "affiche-reponse"
+            }});
+          }
+          return true;
+        },
+        hide: function(){
+          socket.emit('back', {type: "codedelaroute", content: {
+            action: "display-off"
+          }});
+          socket.emit('back', {type: "codedelaroute", content: {
+            action: "image-off"
+          }});
+          this.currentQuestion = null;
+          M.toast({html: 'Hide question !'})
+        },
+        sendAll: function(){
+          socket.emit('back', {type: "codedelaroute", content: {
+            action: "listing",
+            questions: this.questions
+          }});
+          M.toast({html: 'Send all question !'})
+        },
+        sendAllImage: function(){
+          socket.emit('back', {type: "codedelaroute", content: {
+            action: "listing-image",
+            questions: this.questions
+          }});
+          M.toast({html: 'Send all question !'})
+        }
+      }
+    })
+
+
+
+        document.querySelector('.extract').addEventListener('click', function(){
+          var data = hot1.getData()
+          var questions = []
+          data.forEach(function(question){
+            var q = {
+              intitule: "",
+              reponses: [],
+              explication: ""
+            }
+            if(question[0] !== "" && question[0] !== null){
+              q.intitule = question[0];
+              q.image = question[12];
+
+              if(question[9] !== "" && question[9] !== null && question[10] !== "" && question[10] !== null){
+                for(var y = 9; y < 11; y++){
+                  let choices = []
+                  for(var i= (y-8); i< (y-6); i++){
+                    var a = y - 9
+                    var r = i + a
+                    if(question[r] !== "" && question[r] !== null){
+                      choices.push({
+                        label: question[r],
+                        isGood: (question[r+4] !== "" && question[r+4] !== null),
+                      })
+                    }
+                  }
+                  q.reponses.push({
+                    question: question[y],
+                    choices: choices
+                  })
+                }
+              } else {
+                let choices = []
+                for(var i= 1; i< 5; i++){
+                  if(question[i] !== "" && question[i] !== null){
+                    choices.push({
+                      label: question[i],
+                      isGood: (question[i+4] !== "" && question[i+4] !== null),
+                    })
+                  }
+
+                }
+                q.reponses.push({
+                  question: null,
+                  choices: choices
+                })
+              }
+              q.explication = question[11]
+              questions.push(q)
+            }
+          })
+          // console.log(questions)
+          app2.questions = questions
+        })
+
+
+
+    </script>
+  </body>
+</html>

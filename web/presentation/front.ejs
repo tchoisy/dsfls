@@ -1,0 +1,52 @@
+<html>
+  <head>
+    <title>TEST FRONT</title>
+    <link rel="stylesheet" href="/css/master.css">
+  </head>
+  <body class="overflow">
+
+
+    <div v-bind:class="classObject" id="presentation">
+      <div v-bind:class="{'presentation-content': true, 'active': displayOn}">
+        <div class="presentation-text"><h1>{{presentation.text}}</h1></div>
+        <div class="presentation-baseline"><h2>{{presentation.baseline}}</h2></div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js" charset="utf-8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script type="text/javascript">
+          var socket = io.connect('http://<%= config.host %>:<%= config.port %>');
+          // var socket = io.connect('http://localhost:7777');
+          var initData = {
+            displayOn: false,
+            presentation: {
+              text: "",
+              baseline: ""
+            },
+            theme: ""
+          }
+          var app = new Vue({
+            el: '#presentation',
+            data: Object.assign({}, initData),
+            computed: {
+              classObject: function () {
+                let obj = { 'presentation': true}
+                obj[this.theme] = true
+                return obj
+              }
+            }
+          })
+          socket.on('front-presentation', function(data){
+            if(data.action === "affiche-presentation"){
+              app.theme = data.theme
+              app.presentation = data.presentation
+              app.displayOn = true
+            } else if(data.action === "hide-presentation"){
+              app.displayOn = false
+            }
+          })
+
+    </script>
+  </body>
+</html>

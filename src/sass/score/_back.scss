@@ -1,0 +1,20 @@
+h1{
+  text-align: center;
+  color: #054257;
+  text-shadow: 1px 1px 2px #054257;
+  text-transform: uppercase;
+  margin: 5px 0px 10px 0px;
+  @media screen and (max-width: 600px) {
+    font-size: 20px;
+  }
+}
+.score-back{
+  .cup{
+    & > div{
+      padding: 5px 0;
+    }
+    a{
+      width: 100%;
+    }
+  }
+}

@@ -1,0 +1,46 @@
+<html>
+  <head>
+    <title>CODEDELAROUTE FRONT</title>
+    <link rel="stylesheet" href="/css/master.css">
+  </head>
+  <body class="overflow">
+    <div id="image">
+      <div v-for="(question, index) in questions" v-bind:class="{ 'active': (index === displayOnIndex), 'deactive': (index === displayOffIndex), 'codedelaroute-image': true}" >
+        <img v-bind:src="question.image" >
+      </div>
+    </div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js" charset="utf-8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script type="text/javascript">
+          var socket = io.connect('http://<%= config.host %>:<%= config.port %>');
+          var imgDefault = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
+          var initData = {
+            displayOnIndex: -1,
+            displayOffIndex: -1,
+            questions: []
+          }
+          var app = new Vue({
+            el: '#image',
+            data: Object.assign({}, initData)
+          })
+          socket.on('front-codedelaroute', function(data){
+            if(data.action === "image-on"){
+              app.displayOnIndex = data.img
+            } else if(data.action === "image-off"){
+              app.displayOffIndex = app.displayOnIndex
+              setTimeout(function(){
+                app.displayOnIndex = -1
+                app.displayOffIndex = -1
+                app.img = -1
+              }, 2000)
+            } else if(data.action === "listing-image"){
+                app.questions = data.questions
+            }
+          })
+
+
+    </script>
+  </body>
+</html>

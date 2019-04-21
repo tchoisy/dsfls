@@ -1,0 +1,69 @@
+
+
+<html>
+  <head>
+    <title>TWITTER FRONT MISSION LOCALE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/master.css">
+  </head>
+  <body class="front-ml overflow">
+    <div class="front-ml-container" id="tweet">
+      <div v-bind:class="{'front-ml-wrapper': true, 'left': true, 'active': displayOn}">
+        <div class="ml-head-wrapper">
+          <div class="ml-head">
+            <img src="/image/twitter.svg" alt="">
+            <div class="ml-head-text">
+              <h2>TWI<br/>TTER</h2>
+              <small>{{hashtag}}</small>
+            </div>
+          </div>
+        </div>
+        <div class="ml-content-wrapper">
+          <div class="ml-content">
+            <div class="ml-text">{{tweet.text}}</div>
+            <div class="ml-user">{{tweet.user}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js" charset="utf-8"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script type="text/javascript">
+    var socket = io.connect('http://<%= config.host %>:<%= config.port %>');
+
+    var app = new Vue({
+      el: '#tweet',
+      data: {
+        displayOn: false,
+        tweet: {
+          text:"Ceci est un tweet de ouf",
+          user:"@tchoisy"
+        },
+        hashtag: "#ParisEstMagique"
+      }
+    })
+
+    socket.on('front-twitter', function(data){
+      console.log(data)
+      if(data.action === "affiche-tweet"){
+        app.tweet = data.tweet
+        app.hashtag = data.hashtag
+        app.displayOn = true
+      } else if(data.action === "hide-tweet"){
+        app.displayOn = false
+        setTimeout(function(){
+          app.tweet = {
+            text:"",
+            user:""
+          }
+          app.hashtag = ""
+        }, 2000)
+      }
+    })
+
+    </script>
+  </body>
+</html>
