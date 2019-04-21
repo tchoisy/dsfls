@@ -8,7 +8,11 @@ const IP_ADDR = Object.keys(ifs)
   .map(x => ifs[x].filter(x => x.family === 'IPv4' && !x.internal)[0])
   .filter(x => x)[0].address;
 
-
+const interfacePort = 12345
+global.sharedObj = {
+    IP_ADDR: IP_ADDR,
+    PORT: interfacePort
+};
 
 const {app, BrowserWindow} = electron
 
@@ -16,7 +20,7 @@ let mainWindow
 const socketPort = "7777"
 app.on('ready', () =>{
     const server = new Server({
-        port: 12345,
+        port: interfacePort,
         socketHost: IP_ADDR,
         socketPort: socketPort
     })

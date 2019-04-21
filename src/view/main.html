@@ -6,7 +6,24 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   </head>
   <body>
-    <h1>DSFLS</h1>
+    <div id="app">
+      <h1>DSFLS</h1>
+      <p>{{IP_ADDR}}</p>
+    </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+     var remote = require('electron').remote;     
+     var app2 = new Vue({
+      el: '#app',
+      data: {
+        IP_ADDR: remote.getGlobal('sharedObj').IP_ADDR
+      }
+     })    
+
+
+     // var ipcRenderer = require('electron').ipcRenderer;     
+     // ipcRenderer.send('show-prop1');
+  </script>
   </body>
 </html>
