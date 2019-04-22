@@ -4,11 +4,73 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Raleway:100,400,700);
+      body{
+        background: rgba(255,255,255,0.5);
+        background-image: url(https://images.pexels.com/photos/53265/pexels-photo-53265.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940);
+        background-size: cover;
+        -webkit-user-select: none;
+        -webkit-app-region: drag;
+      }
+
+      .box {
+        width: 500px;
+        height: 300px;
+        position: relative;
+        border-radius: 5px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 20px;
+        text-align: center;
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        box-sizing: border-box;
+        text-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+        display: flex;
+        transition: box-shadow .3s ease;
+      }
+
+      .box .content {
+        margin: auto;
+      }
+
+      h1, h2, a, p {
+        color: white;
+        font-weight: 100;
+      }
+      .tinted h1, .tinted h2, .tinted a, .tinted p {
+        color: black;
+        text-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);
+      }
+
+      h2 {
+        font-size: 14px;
+      }
+
+      p {
+        margin: 20px;
+      }
+      p.related {
+        text-transform: uppercase;
+        font-weight: 700;
+        color: #444;
+      }
+      p.related a {
+        font-weight: 700;
+        text-decoration: none;
+      }
+      p.related a:hover {
+        text-decoration: underline;
+      }
+
+    </style>
   </head>
   <body>
-    <div id="app">
-      <h1>DSFLS</h1>
-      <p>{{IP_ADDR}}</p>
+    <div id="box1" class="box blurred-bg tinted">
+      <div class="content" id="app">
+        <h1 id="title">DSFLS APP</h1>
+        <p class="related">Lien <a>{{IP_ADDR}}:{{PORT}}</a></p>  
+      </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
@@ -17,13 +79,12 @@
      var app2 = new Vue({
       el: '#app',
       data: {
-        IP_ADDR: remote.getGlobal('sharedObj').IP_ADDR
+        IP_ADDR: remote.getGlobal('sharedObj').IP_ADDR,
+        PORT: remote.getGlobal('sharedObj').PORT
       }
      })    
+  
 
-
-     // var ipcRenderer = require('electron').ipcRenderer;     
-     // ipcRenderer.send('show-prop1');
   </script>
   </body>
 </html>

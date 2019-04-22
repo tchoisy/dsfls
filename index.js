@@ -31,7 +31,13 @@ app.on('ready', () =>{
     })
     socket.run()
 
-    mainWindow = new BrowserWindow({ width: 1366, height: 768 })
+    mainWindow = new BrowserWindow({ 
+        width: 500, 
+        height: 300, 
+        frame: false, 
+        titleBarStyle: 'hidden', 
+        transparent: true 
+    })
 
     mainWindow.loadURL(url.format({
         pathname: path.join(__dirname, 'src/view/main.html'),
@@ -39,5 +45,4 @@ app.on('ready', () =>{
         slashes: true
     }))
 })
-
 
