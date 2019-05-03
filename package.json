@@ -15,7 +15,8 @@
     "package-mac": "electron-packager . dsfls-app --overwrite --platform=darwin --arch=x64 --icon=src/assets/icon/logo.icns --prune=true --out=release-builds",
     "package-win": "electron-packager . dsfls-app --overwrite --platform=win32 --arch=ia32 --icon=src/assets/icon/logo.ico --prune=true --out=release-builds --asar=true --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"DSFLS\"",
     "package-linux": "electron-packager . dsfls-app --overwrite --platform=linux --arch=x64 --icon=src/assets/icon/logo.png --prune=true --out=release-builds --asar=true",
-    "create-installer-mac": "electron-installer-dmg ./release-builds/dsfls-app-darwin-x64/dsfls-app.app dsfls-app --out=release-builds --overwrite --icon=src/assets/icon/logo.icns"
+    "create-installer-mac": "electron-installer-dmg ./release-builds/dsfls-app-darwin-x64/dsfls-app.app dsfls-app --out=release-builds --overwrite --icon=src/assets/icon/logo.icns",
+    "create-installer-win": "node installer/windows/createinstaller.js"
   },
   "author": "Tommy CHOISY",
   "license": "GNU AGPL",
