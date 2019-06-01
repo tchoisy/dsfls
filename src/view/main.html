@@ -10,8 +10,8 @@
         background: rgba(255,255,255,0.5);
         background-image: url(https://images.pexels.com/photos/53265/pexels-photo-53265.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940);
         background-size: cover;
-        -webkit-user-select: none;
-        -webkit-app-region: drag;
+        // -webkit-user-select: none;
+       // -webkit-app-region: drag;
       }
 
       .box {
@@ -62,6 +62,9 @@
       p.related a:hover {
         text-decoration: underline;
       }
+      .pointer{
+        cursor: pointer;
+      }
 
     </style>
   </head>
@@ -69,20 +72,25 @@
     <div id="box1" class="box blurred-bg tinted">
       <div class="content" id="app">
         <h1 id="title">DSFLS APP</h1>
-        <p class="related">{{IP_ADDR}}:{{PORT}}</p>  
+        <p class="related">{{IP_ADDR}}:{{PORT}} <i class="material-icons pointer" v-on:click="showSettings">settings</i></p>  
       </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script>
-     var remote = require('electron').remote;     
-     var app2 = new Vue({
-      el: '#app',
-      data: {
-        IP_ADDR: remote.getGlobal('sharedObj').IP_ADDR,
-        PORT: remote.getGlobal('sharedObj').PORT
-      }
-     })    
+      const {remote, ipcRenderer} = require('electron');     
+      const app = new Vue({
+        el: '#app',
+        data: {
+          IP_ADDR: remote.getGlobal('sharedObj').IP_ADDR,
+          PORT: remote.getGlobal('sharedObj').PORT
+        },
+        methods: {
+          showSettings: ()=>{
+            ipcRenderer.send('open-settings')
+          }
+        }
+      })    
   
 
   </script>

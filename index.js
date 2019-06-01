@@ -22,9 +22,14 @@ global.sharedObj = {
     PORT: interfacePort
 };
 
-const {app, BrowserWindow, Menu} = electron
+const {app, BrowserWindow, Menu, ipcMain} = electron
+
+ipcMain.on('open-settings', (event, arg)=> {
+    settingsWindow.show()
+})
 
 let mainWindow
+let settingsWindow
 const socketPort = "7777"
 app.on('ready', () =>{
     const server = new Server({
@@ -49,6 +54,19 @@ app.on('ready', () =>{
 
     mainWindow.loadURL(url.format({
         pathname: path.join(__dirname, 'src/view/main.html'),
+        protocol: 'file',
+        slashes: true
+    }))
+
+    settingsWindow = new BrowserWindow({ 
+        width: 1000, 
+        height: 500, 
+        show: false,
+        frame: false
+    })
+
+    settingsWindow.loadURL(url.format({
+        pathname: path.join(__dirname, 'src/view/settings.html'),
         protocol: 'file',
         slashes: true
     }))

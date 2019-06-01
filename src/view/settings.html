@@ -1,0 +1,141 @@
+<html>
+  <head>
+    <title>Settings</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Raleway:100,400,700);
+      
+      .tabs .tab a{
+          color:#000;
+      } /*Black color to the text*/
+
+      .tabs .tab a:hover {
+          background-color:#eee;
+          color:#000;
+      } /*Text color on hover*/
+
+      .tabs .tab a.active {
+          background-color:#888;
+          color:#000;
+      } /*Background and text color when a tab is active*/
+
+      .tabs .indicator {
+          background-color:#000;
+      } 
+      .pointer{
+        cursor: pointer;
+      }
+      .small-icon{
+        font-size: 16px;
+        color: lightgrey;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="row">
+        <div class="col s12">
+          <ul class="tabs">
+            <li class="tab col s3"><a class="active" href="#ecran">Ecran</a></li>
+          </ul>
+        </div>
+        <div id="ecran" class="col s12">
+           <table>
+            <thead>
+              <tr>
+                  <th>Panneau de controle</th>
+                  <th>Affichage</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr v-for="(view, item) in views">
+                <td>
+                  <small>{{view.name}}</small>
+                  <ul><li v-for="path in view.back">{{link(path)}} <i class="material-icons pointer small-icon" v-on:click="copy(path)">content_copy</i></li></ul>
+                </td>
+                <td>
+                  <ul><li v-for="path in view.front">{{link(path)}} <i class="material-icons pointer small-icon" v-on:click="copy(path)">content_copy</i></li></ul>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+        
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+      
+      const {remote} = require('electron');     
+      const app = new Vue({
+        el: '#app',
+        data: {
+          IP_ADDR: remote.getGlobal('sharedObj').IP_ADDR,
+          PORT: remote.getGlobal('sharedObj').PORT,
+          views: [
+            { 
+              name: "code de la route",
+              back: ['/codedelaroute/back'],
+              front: [
+                '/codedelaroute/front-image',
+                '/codedelaroute/front-list',
+                '/codedelaroute/front',
+              ]
+            },
+            { 
+              name: "countdown",
+              back: ['/countdown/back'],
+              front: [
+                '/countdown/front',
+              ]
+            },
+            { 
+              name: "presentation",
+              back: ['/presentation/back'],
+              front: [
+                '/presentation/front',
+                '/presentation/front-mission-locale',
+              ]
+            },
+            { 
+              name: "Score",
+              back: ['/score/back'],
+              front: [
+                '/score/front',
+                '/score/front-cup',
+              ]
+            }
+          ]
+        },
+        methods: {
+          link(path){
+            return `http://${this.IP_ADDR}:${this.PORT}${path}`
+          },
+          copy(path){
+            const link = this.link(path)
+            navigator.clipboard.writeText(link).then(function() {
+              M.toast({html: `Votre lien à bien été copié <br> ${link}`, classes: "green darken-1 text-white"})
+            }, function() {
+              M.toast({html: `La copie à échoué`, classes: "red darken-1 text-white"})
+            });
+          }
+        },
+        mounted: () =>{
+          var tabEl = document.querySelector('.tabs')
+          var tabs = M.Tabs.init(tabEl, {});
+        }
+      })    
+  
+      document.addEventListener("keydown", function (e) {
+        if (e.which === 123) {
+          remote.getCurrentWindow().toggleDevTools();
+        } 
+      });
+
+  </script>
+  </body>
+</html>
