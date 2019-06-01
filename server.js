@@ -1,5 +1,6 @@
 const express = require("express");
 const path = require("path");
+const os = require('os');
 const app     = express();
 
 app.set('view engine', 'ejs');
@@ -41,6 +42,14 @@ module.exports = class Server{
       const file = path.join(__dirname+'/web/js/'+js)
       res.sendFile(file);
     });
+
+    app.get('/local/:view', function(request, res, next) {
+      const view = request.params.view;
+      const homedir = os.homedir();
+      const file = path.join(homedir+'/dsfls/view/'+view+'.html')
+      res.sendFile(file);
+    });
+
     app.get('/:view([^/]+/[^/]+)', function(request, res, next) {
       const view = request.params.view;
       res.render(view, {
@@ -50,7 +59,8 @@ module.exports = class Server{
         }
       });
     });
+
     
-    app.listen(this.port);
+    app.listen(this.port, () => { console.log(`Server listening on port ${this.port}`)});
   }
 }

@@ -21,7 +21,7 @@ module.exports = class Socket{
     });
     
     io.listen(this.port);
-    console.log('Listening on port ', this.port);
+    console.log('Socket listening on port ', this.port);
 
   }
 }
