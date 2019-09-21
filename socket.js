@@ -18,6 +18,10 @@ module.exports = class Socket{
           const emitName = `front-${data.type}`
           const res = client.broadcast.emit(emitName, data.content);
       });
+      client.on('launch-server', (data) => {
+          const emitName = `launch-${data.type}`
+          const res = client.broadcast.emit(emitName, data.content);
+      });
     });
     
     io.listen(this.port);

@@ -11,6 +11,8 @@ const path = require('path')
 const Server = require('./server')
 const Socket = require('./socket')
 const MenuApp = require('./src/config/menu')
+const TwitterServer = require('./web/twitter/node/twitterServer')
+const YoutubeServer = require('./web/youtube/node/youtubeServer')
 const ifs = require('os').networkInterfaces();
 const IP_ADDR = Object.keys(ifs)
   .map(x => ifs[x].filter(x => x.family === 'IPv4' && !x.internal)[0])
@@ -31,6 +33,22 @@ ipcMain.on('open-settings', (event, arg)=> {
 let mainWindow
 let settingsWindow
 const socketPort = "7777"
+let twitterServer
+let youtubeServer
+ipcMain.on('start-youtube', (event, arg)=> {
+    console.log('youtube server')
+    youtubeServer = new YoutubeServer({
+        host: IP_ADDR,
+        port: socketPort
+    })
+})
+ipcMain.on('start-twitter', (event, arg)=> {
+    console.log('twitter server')
+    twitterServer = new TwitterServer({
+        host: IP_ADDR,
+        port: socketPort
+    })
+})
 app.on('ready', () =>{
     const server = new Server({
         port: interfacePort,

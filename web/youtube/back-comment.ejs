@@ -31,6 +31,15 @@
             </div>
           </div>
         </li>
+        <li><a href="#!"><i class="fab fa-key"></i>API KEY</a></li>
+        <li>
+          <div class="row">
+            <div class="input-field col s12">
+              <input placeholder="API KEY" id="apikey" type="text" class="validate" v-model="api_key">
+              <label for="apikey">Video Id</label>
+            </div>
+          </div>
+        </li>
         <li>
           <a class="waves-effect waves-light btn" v-on:click="launchApp">Lancer une app</a>
         </li>
@@ -129,6 +138,7 @@
     var app = new Vue({
       el: '#comments',
       data: {
+        api_key: "AIzaSyCEoW1X756WcSoXBH7nxh3dqVyBexGfJ0Q",
         research: {
           videoId: ""
         },
@@ -177,7 +187,8 @@
         launchApp: function(){
           socket.emit('back', {type: "node-youtube-comment", content: {
             action: "start",
-            idVideo: this.research.videoId
+            idVideo: this.research.videoId,
+            api_key: this.api_key
           }})
         }
       }

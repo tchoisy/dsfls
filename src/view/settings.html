@@ -4,6 +4,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.35.0/codemirror.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/theme/dracula.min.css" rel="stylesheet">
     <style>
       @import url(https://fonts.googleapis.com/css?family=Raleway:100,400,700);
       
@@ -39,6 +41,8 @@
         <div class="col s12">
           <ul class="tabs">
             <li class="tab col s3"><a class="active" href="#ecran">Ecran</a></li>
+            <li class="tab col s3"><a href="#app-server">Youtube/Twitter</a></li>
+            <li class="tab col s3"><a href="#help">Help</a></li>
           </ul>
         </div>
         <div id="ecran" class="col s12">
@@ -63,14 +67,42 @@
             </tbody>
           </table>
         </div>
+        <div id="app-server" class="col s12">
+          <a class="waves-effect waves-light btn-large" v-on:click="startYoutube">Demarrer Youtube</a>
+          <a class="waves-effect waves-light btn-large" v-on:click="startTwitter">Demarrer Twitter</a>
+        </div>
+        <div id="help" class="col s12">
+          <p>Add file in : HOMEDIR/dsfls/view</p>
+          <p>Name file : filename.ejs</p>
+          <p>Access : http://BASEURL:PORT/local/filename</p>
+          <p>Base file :</p>
+          <textarea id="code">
+            <html>
+              <head>
+                <title>RENDER</title>
+              </head>
+              <body>
+
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js" charset="utf-8"></script>
+                <script type="text/javascript">
+                      var socket = io.connect('http://<%= config.host %>:<%= config.port %>');
+
+                </script>
+              </body>
+            </html>
+
+          </textarea>
+        </div>
       </div>
     </div>
         
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://codemirror.net/lib/codemirror.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.40.0/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/mode/xml/xml.min.js"></script>
     <script>
-      
-      const {remote} = require('electron');     
+      const {remote, ipcRenderer} = require('electron');     
       const app = new Vue({
         el: '#app',
         data: {
@@ -108,6 +140,22 @@
                 '/score/front',
                 '/score/front-cup',
               ]
+            },
+            { 
+              name: "Youtube",
+              back: ['/youtube/back-comment'],
+              front: [
+                '/youtube/front-comment',
+                '/youtube/front-mission-locale',
+              ]
+            },
+            { 
+              name: "Twitter",
+              back: ['/twitter/back'],
+              front: [
+                '/twitter/front',
+                '/twitter/front-mission-locale',
+              ]
             }
           ]
         },
@@ -122,6 +170,12 @@
             }, function() {
               M.toast({html: `La copie à échoué`, classes: "red darken-1 text-white"})
             });
+          },
+          startYoutube(){
+            ipcRenderer.send('start-youtube')
+          },
+          startTwitter(){
+            ipcRenderer.send('start-twitter')
           }
         },
         mounted: () =>{
@@ -135,6 +189,29 @@
           remote.getCurrentWindow().toggleDevTools();
         } 
       });
+
+      var editorOptions = {
+            autoRefresh: true,
+            firstLineNumber: 1,
+            lineNumbers: true,
+            smartIndent: true,
+            lineWrapping: true,
+            indentWithTabs: true,
+            refresh: true,
+            mode : "xml",
+            htmlMode: true,
+            theme: "dracula"
+          };
+      
+      var code = document.querySelector("#code")
+      var editor = CodeMirror.fromTextArea(code, editorOptions);
+      //self[0].editor = editor;
+      editor.save();
+      
+      // beautify the code
+      // var text = code.innerText;
+      // editor.setValue( js_beautify( text, { indent_size: 2 } ) );
+
 
   </script>
   </body>

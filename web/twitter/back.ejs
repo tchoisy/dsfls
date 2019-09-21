@@ -67,11 +67,11 @@
         </li>
         <li><div class="divider"></div></li>
         <li>
-          <a class="waves-effect waves-light btn">Lancer une app</a>
+          <a class="waves-effect waves-light btn" v-on:click="launchApp()">Lancer une app</a>
         </li>
       </ul>
 
-      <div class="tweet-list" id="tweets">
+      <div class="tweet-list">
         <div class="row">
           <div class="col m7 s12 column">
             <ul class="collection">
@@ -219,6 +219,15 @@
         hide: function(){
           socket.emit('back', {type: "twitter", content: {
             action: "hide-tweet"
+          }})
+        },
+        launchApp: function(){
+          socket.emit('launch-server', {type: "twitter", content: {
+            hashtag: this.research.hashtag,
+            consumer_key: this.research.connection.consumer_key,
+            consumer_secret: this.research.consumer_secret,
+            access_token_key: this.research.access_key,
+            access_token_secret: this.research.access_secret,
           }})
         }
       }

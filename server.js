@@ -46,8 +46,14 @@ module.exports = class Server{
     app.get('/local/:view', function(request, res, next) {
       const view = request.params.view;
       const homedir = os.homedir();
-      const file = path.join(homedir+'/dsfls/view/'+view+'.html')
-      res.sendFile(file);
+      const file = path.join(homedir+'/dsfls/view/'+view)
+      // res.sendFile(file);
+      res.render(file, {
+        config: {
+          host: self.socketHost,
+          port: self.socketPort
+        }
+      })
     });
 
     app.get('/:view([^/]+/[^/]+)', function(request, res, next) {
